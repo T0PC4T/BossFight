@@ -1,38 +1,34 @@
-package main
+package brawl
 
 import (
 	"fmt"
 
-	"github.com/T0PC4T/BossFight/brawl"
 	"github.com/hajimehoshi/ebiten"
 )
 
-type level interface {
-	Update() (bool, error)
-	Draw(*ebiten.Image) error
-}
-
-type gameBrawl struct {
+type GameBrawl struct {
 	currentLevel level
 	nextLevel    level
 }
 
-func newGameBrawl() *gameBrawl {
+func NewGameBrawl() *GameBrawl {
 	// Choose and load level
 	// Load level
-	dl := brawl.NewDevelopmentLevel()
+	dl := newDevelopmentLevel()
 	// add players and settings
-	brawl.NewRambo(dl)
+	NewRambo(dl)
 
-	g := &gameBrawl{currentLevel: dl}
+	g := &GameBrawl{currentLevel: dl}
 	return g
 }
 
-func (gm gameBrawl) getType() string {
+// GetType get the type of game mode/status
+func (gm GameBrawl) GetType() string {
 	return "game"
 }
 
-func (gm gameBrawl) loop(screen *ebiten.Image) error {
+// Display called as main game loop (normally update but Display is for a whole game state)
+func (gm GameBrawl) Display(screen *ebiten.Image) error {
 
 	if finished, err := gm.currentLevel.Update(); err != nil {
 		if finished {

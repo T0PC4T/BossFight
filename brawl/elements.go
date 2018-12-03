@@ -4,36 +4,70 @@ import "github.com/hajimehoshi/ebiten"
 
 // Elements
 
-type element interface {
-	setID(int) error
-	update() error
-	draw(*ebiten.Image) error
-
-	// getters and setters
-	getPos() (float64, float64)
-	setPos(float64, float64) error
-	getVel() (float64, float64)
-	setVel(float64, float64) error
-	getDim() (int, int)
-	setDim(int, int) error
-
-	// components
-	getComponentSlicePtr() *[]component
+type element struct {
+	ID         int
+	s          *sprite
+	status     string
+	x, y       float64
+	vx, vy     float64
+	w, h       int
+	components []component
 }
 
-func addElement(l level, e element) {
-	eSlice := l.GetElementSlicePtr()
-	e.setID(len(*eSlice) - 1)
-	*eSlice = append(*eSlice, e)
+// getters and setters
+func (e *element) getPos() (float64, float64) {
+	return e.x, e.y
+}
+func (e *element) setPos(x, y float64) error {
+	e.x, e.y = x, y
+	return nil
 }
 
-func removeElement(l level, id int) bool {
-	eSlice := l.GetElementSlicePtr()
-	if tSlice := *eSlice; id < len(tSlice) {
-		tSlice[id] = tSlice[len(tSlice)-1]
-		tSlice = tSlice[:len(tSlice)-1]
-		tSlice[id].setID(id)
-		*eSlice = tSlice
+func (e *element) getVel() (float64, float64) {
+	return e.vx, e.vy
+}
+func (e *element) setVel(vx, vy float64) error {
+	e.vx, e.vy = vx, vy
+	return nil
+}
+func (e *element) getDim() (int, int) {
+	return e.w, e.h
+}
+func (e *element) setDim(w, h int) error {
+	e.w, e.h = w, h
+	return nil
+}
+
+func (e *element) setID(ID int) error {
+	e.ID = ID
+	return nil
+}
+
+// loop functions (update and draw)
+func (e *element) update() error {
+	return nil
+}
+
+func (e *element) draw(screen *ebiten.Image) error {
+	canvas, _ := ebiten.NewImage(e.w, e.h, ebiten.FilterDefault)
+	e.s.draw(canvas)
+
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(e.x, e.y)
+	screen.DrawImage(canvas, op)
+	return nil
+}
+
+func (e *element) addComponent(c component) {
+	c.setID(len(e.components) - 1)
+	e.components = append(e.components, c)
+}
+
+func (e *element) removeComponent(ID int) bool {
+	if ID < len(e.components) {
+		e.components[ID] = e.components[len(e.components)-1]
+		e.components = e.components[:len(e.components)-1]
+		e.components[ID].setID(ID)
 	} else {
 		return false
 	}

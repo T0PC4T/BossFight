@@ -3,14 +3,15 @@ package main
 import (
 	"log"
 
+	"github.com/T0PC4T/BossFight/brawl"
 	. "github.com/T0PC4T/BossFight/global"
 	"github.com/T0PC4T/BossFight/loader"
 	"github.com/hajimehoshi/ebiten"
 )
 
 type displayView interface {
-	getType() string
-	loop(*ebiten.Image) error
+	GetType() string
+	Display(*ebiten.Image) error
 }
 
 var (
@@ -20,13 +21,13 @@ var (
 
 func init() {
 	allScreens = make(map[string]displayView)
-	brawl := newGameBrawl()
-	allScreens["development"] = brawl
+	brawlMode := brawl.NewGameBrawl()
+	allScreens["development"] = brawlMode
 	currentScreen = allScreens["development"]
 }
 
 func update(s *ebiten.Image) error {
-	return currentScreen.loop(s)
+	return currentScreen.Display(s)
 }
 
 func main() {

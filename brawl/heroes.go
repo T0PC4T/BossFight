@@ -1,12 +1,29 @@
 package brawl
 
-import "github.com/hajimehoshi/ebiten"
+import "github.com/T0PC4T/BossFight/loader"
 
-type hero interface {
-	Update() error
-	Draw(*ebiten.Image) error
-}
+func NewRambo(l level) {
+	// Definitions //
+	s := new(sprite)
+	s.animations = make(map[string]*animation)
 
-func heroesUpdate() {
+	a := new(animation)
+	a.spriteSheet = loader.RamboSpriteSheet
+	a.frameOX = 0
+	a.frameOY = 32
+	a.frameWidth = 32
+	a.frameHeight = 32
+	a.frameNum = 6
+	a.ticksPerFrame = 10
 
+	// Assignments //
+
+	// Sprite
+	s.status = "running"
+	s.animations["running"] = a
+
+	// Create rambo
+	e := &element{s: s, status: "alive", w: 100, h: 100, x: 100, y: 100}
+
+	l.addElement(e)
 }
