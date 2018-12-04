@@ -2,7 +2,7 @@ package brawl
 
 import "github.com/T0PC4T/BossFight/loader"
 
-func NewRambo(l level) {
+func NewRambo(l *level) {
 	// Definitions //
 	s := new(sprite)
 	s.animations = make(map[string]*animation)
@@ -24,6 +24,6 @@ func NewRambo(l level) {
 
 	// Create rambo
 	e := &element{s: s, status: "alive", w: 100, h: 100, x: 100, y: 100}
-
+	e.newGravityComponent(0.25)
 	l.addElement(e)
 }

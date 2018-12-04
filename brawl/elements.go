@@ -45,6 +45,9 @@ func (e *element) setID(ID int) error {
 
 // loop functions (update and draw)
 func (e *element) update() error {
+	for _, c := range e.components {
+		c.update(e)
+	}
 	return nil
 }
 
