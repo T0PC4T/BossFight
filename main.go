@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/T0PC4T/BossFight/brawl"
 	. "github.com/T0PC4T/BossFight/global"
 	"github.com/T0PC4T/BossFight/loader"
 	"github.com/hajimehoshi/ebiten"
+	"github.com/hajimehoshi/ebiten/ebitenutil"
 )
 
 type displayView interface {
@@ -27,6 +29,8 @@ func init() {
 }
 
 func update(s *ebiten.Image) error {
+	msg := fmt.Sprintf("FPS: %0.2f", ebiten.CurrentFPS())
+	ebitenutil.DebugPrint(s, msg)
 	return currentScreen.Display(s)
 }
 

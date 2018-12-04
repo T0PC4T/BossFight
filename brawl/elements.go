@@ -5,12 +5,13 @@ import "github.com/hajimehoshi/ebiten"
 // Elements
 
 type element struct {
-	ID         int
-	s          *sprite
-	status     string
-	x, y       float64
-	vx, vy     float64
-	w, h       int
+	ID     int
+	s      *sprite
+	status string
+	x, y   float64
+	w, h   int
+
+	store      map[string]interface{}
 	components []component
 }
 
@@ -20,14 +21,6 @@ func (e *element) getPos() (float64, float64) {
 }
 func (e *element) setPos(x, y float64) error {
 	e.x, e.y = x, y
-	return nil
-}
-
-func (e *element) getVel() (float64, float64) {
-	return e.vx, e.vy
-}
-func (e *element) setVel(vx, vy float64) error {
-	e.vx, e.vy = vx, vy
 	return nil
 }
 func (e *element) getDim() (int, int) {
@@ -62,15 +55,18 @@ func (e *element) draw(screen *ebiten.Image) error {
 }
 
 func (e *element) addComponent(c component) {
-	c.setID(len(e.components) - 1)
 	e.components = append(e.components, c)
 }
 
-func (e *element) removeComponent(ID int) bool {
-	if ID < len(e.components) {
+func (e *element) removeComponent(name string) bool {
+	for i, c := range e.components {
+		if c.getName() == name {
+
+		}
+	}
+	if index < len(e.components) {
 		e.components[ID] = e.components[len(e.components)-1]
 		e.components = e.components[:len(e.components)-1]
-		e.components[ID].setID(ID)
 	} else {
 		return false
 	}
