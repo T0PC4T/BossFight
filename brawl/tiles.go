@@ -1,7 +1,6 @@
 package brawl
 
 import (
-	. "github.com/T0PC4T/BossFight/global"
 	"github.com/T0PC4T/BossFight/loader"
 	"github.com/hajimehoshi/ebiten"
 )
@@ -17,7 +16,11 @@ type tile struct {
 }
 
 func (t *tile) isActive() bool {
-	return t.active
+	if t == nil {
+		return false
+	} else {
+		return t.active
+	}
 }
 
 func collisionTileUpdate(t *tile) {}
@@ -25,10 +28,10 @@ func collisionTileUpdate(t *tile) {}
 func collisionTileDraw(t *tile, screen *ebiten.Image) {
 	drawImg := loader.Grasstile
 	w, _ := drawImg.Size()
-	scalePercentage := TileSizeF / float64(w)
+	scalePercentage := tileSizeF / float64(w)
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Scale(scalePercentage, scalePercentage)
-	op.GeoM.Translate(float64(t.x*TileSize), float64(t.y*TileSize))
+	op.GeoM.Translate(float64(t.x*tileSize), float64(t.y*tileSize))
 	screen.DrawImage(drawImg, op)
 }
 func collisionTileCollide(t *tile, e element) {}

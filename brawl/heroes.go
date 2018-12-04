@@ -25,5 +25,7 @@ func NewRambo(l *level) {
 	// Create rambo
 	e := &element{s: s, status: "alive", w: 100, h: 100, x: 100, y: 100}
 	e.newGravityComponent(0.25)
+	e.newBlockCollider()
+	e.newVelocityApplier(2, 1)
 	l.addElement(e)
 }

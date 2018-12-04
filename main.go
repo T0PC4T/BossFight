@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/T0PC4T/BossFight/brawl"
-	. "github.com/T0PC4T/BossFight/global"
 	"github.com/T0PC4T/BossFight/loader"
 	"github.com/hajimehoshi/ebiten"
 	"github.com/hajimehoshi/ebiten/ebitenutil"
@@ -16,12 +15,22 @@ type displayView interface {
 	Display(*ebiten.Image) error
 }
 
+const (
+	screenWidth  int     = 1920
+	screenHeight int     = 1080
+	tilesWidth   int     = 48
+	tilesHeight  int     = 27
+	tileSize     int     = screenWidth / tilesWidth
+	tileSizeF    float64 = float64(tileSize)
+)
+
 var (
 	currentScreen displayView
 	allScreens    map[string]displayView
 )
 
 func init() {
+	brawl.InitializeBrawl(screenWidth, screenHeight, tilesWidth, tilesHeight)
 	allScreens = make(map[string]displayView)
 	brawlMode := brawl.NewGameBrawl()
 	allScreens["development"] = brawlMode
@@ -42,7 +51,7 @@ func main() {
 	ebiten.SetFullscreen(true)
 	ebiten.SetRunnableInBackground(true)
 
-	if err := ebiten.Run(update, ScreenWidth, ScreenHeight, 1, "Boss Fight"); err != nil {
+	if err := ebiten.Run(update, screenWidth, screenHeight, 1, "Boss Fight"); err != nil {
 		panic(err)
 	}
 }

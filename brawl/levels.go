@@ -1,13 +1,12 @@
 package brawl
 
 import (
-	gl "github.com/T0PC4T/BossFight/global"
 	"github.com/hajimehoshi/ebiten"
 )
 
 type level struct {
 	name        string
-	mapLayout   [gl.TilesWidth][gl.TilesHeight]*tile
+	mapLayout   [][]*tile
 	allElements []*element
 }
 
@@ -48,7 +47,7 @@ func (l *level) draw(canvas *ebiten.Image) error {
 }
 
 func (l *level) addElement(e *element) {
-	e.setID(len(l.allElements) - 1)
+	e.l = l
 	l.allElements = append(l.allElements, e)
 }
 
@@ -61,4 +60,21 @@ func (l *level) removeElement(ID int) bool {
 		return false
 	}
 	return true
+}
+
+// Levels
+
+// newDevelopmentLevel Creates a new level in this case its a development level
+func newDevelopmentLevel() *level {
+	l := &level{name: "DevLevel", allElements: make([]*element, 0, 50)}
+	l.mapLayout = make([][]*tile, tilesWidth)
+	for tx := range l.mapLayout {
+		l.mapLayout[tx] = make([]*tile, tilesHeight)
+		for ty := range l.mapLayout[tx] {
+			if ty == 20 {
+				l.mapLayout[tx][ty] = newTile(tx, ty)
+			}
+		}
+	}
+	return l
 }

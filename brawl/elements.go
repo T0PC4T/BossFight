@@ -7,11 +7,12 @@ import "github.com/hajimehoshi/ebiten"
 type element struct {
 	ID     int
 	s      *sprite
+	l      *level
 	status string
 	x, y   float64
+	vx, vy float64
 	w, h   int
 
-	store      map[string]interface{}
 	components []component
 }
 
@@ -21,6 +22,13 @@ func (e *element) getPos() (float64, float64) {
 }
 func (e *element) setPos(x, y float64) error {
 	e.x, e.y = x, y
+	return nil
+}
+func (e *element) getVel() (float64, float64) {
+	return e.vx, e.vy
+}
+func (e *element) setVel(vx, vy float64) error {
+	e.vx, e.vy = vx, vy
 	return nil
 }
 func (e *element) getDim() (int, int) {
@@ -58,17 +66,17 @@ func (e *element) addComponent(c component) {
 	e.components = append(e.components, c)
 }
 
-func (e *element) removeComponent(name string) bool {
-	for i, c := range e.components {
-		if c.getName() == name {
+// func (e *element) removeComponent(name string) bool {
+// 	for i, c := range e.components {
+// 		if c.getName() == name {
 
-		}
-	}
-	if index < len(e.components) {
-		e.components[ID] = e.components[len(e.components)-1]
-		e.components = e.components[:len(e.components)-1]
-	} else {
-		return false
-	}
-	return true
-}
+// 		}
+// 	}
+// 	if index < len(e.components) {
+// 		e.components[ID] = e.components[len(e.components)-1]
+// 		e.components = e.components[:len(e.components)-1]
+// 	} else {
+// 		return false
+// 	}
+// 	return true
+// }
