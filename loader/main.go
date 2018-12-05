@@ -16,9 +16,17 @@ var (
 	// tiles
 	Grasstile *ebiten.Image
 	BrickType *ebiten.Image
+	// Background image
+	BackgroundImg *ebiten.Image
 )
 
 func InitialLoad() error {
+
+	if img, _, err := image.Decode(bytes.NewReader(assets.Background)); err != nil {
+		return err
+	} else {
+		BackgroundImg, _ = ebiten.NewImageFromImage(img, ebiten.FilterDefault)
+	}
 
 	if img, _, err := image.Decode(bytes.NewReader(assets.BrickTile)); err != nil {
 		return err

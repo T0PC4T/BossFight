@@ -1,6 +1,56 @@
 package brawl
 
-import "github.com/T0PC4T/BossFight/loader"
+import (
+	"github.com/T0PC4T/BossFight/loader"
+)
+
+const (
+	gravity     float64 = 0.3
+	ramboSpeed  float64 = 0.2
+	ramboMaxVel float64 = 3
+)
+
+type rambo struct {
+	e        *element
+	speed    float64
+	cooldown int
+}
+
+func (r *rambo) right() {
+	r.e.vx += r.speed
+}
+
+func (r *rambo) left() {
+	r.e.vx -= r.speed
+}
+
+func (r *rambo) up() {
+	r.e.vy -= 4
+}
+
+func (r *rambo) down() {
+	r.e.vy += 1
+}
+
+func (r *rambo) upRight() {
+	r.e.vx += r.speed
+	r.e.vy -= 4
+}
+
+func (r *rambo) upLeft() {
+	r.e.vx -= r.speed
+	r.e.vy -= 4
+}
+
+func (r *rambo) downRight() {
+	r.e.vx += r.speed
+	r.e.vy += 1
+}
+
+func (r *rambo) downLeft() {
+	r.e.vx -= r.speed
+	r.e.vy += 1
+}
 
 func NewRambo(l *level) {
 	// Definitions //
@@ -23,9 +73,13 @@ func NewRambo(l *level) {
 	s.animations["running"] = a
 
 	// Create rambo
-	e := &element{s: s, status: "alive", w: 100, h: 100, x: 100, y: 100}
-	e.newGravityComponent(0.25)
+	// Create element
+	e := &element{s: s, status: "alive", w: 32, h: 32, x: 100, y: 100}
+	// Create rambo
+	r := &rambo{e: e, speed: ramboSpeed}
+	e.newGravityComponent(gravity)
+	e.newKeyboardController(r.right, r.left, r.up, r.down, r.upRight, r.upLeft, r.downRight, r.downLeft, r.right, r.right, r.right, r.right, r.right)
+	e.newVelocityApplier(ramboMaxVel, 1, 0.9)
 	e.newBlockCollider()
-	e.newVelocityApplier(2, 1)
 	l.addElement(e)
 }
