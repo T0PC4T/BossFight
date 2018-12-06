@@ -8,23 +8,21 @@ import (
 
 type component interface {
 	update(*element) error
-	getName() string
 	isActive() bool
 	setActive(a bool)
 }
 
 // Components
 
-type componentActive struct {
-	active bool
-}
+type componentActive bool
 
 func (c *componentActive) isActive() bool {
-	return c.active
+	return bool(*c)
 }
 
 func (c *componentActive) setActive(a bool) {
-	c.active = a
+	v := componentActive(a)
+	c = &v
 }
 
 // Gravity Componenet
@@ -77,10 +75,6 @@ func (v *compVelocity) update(e *element) error {
 	e.vy *= v.friction
 
 	return nil
-}
-
-func (v *compVelocity) getName() string {
-	return "velocity"
 }
 
 func (e *element) newVelocityApplier(max float64, scale float64, friction float64) {
@@ -138,10 +132,6 @@ func (v *compBlockCollider) update(e *element) error {
 	// interact with a block depending on the direction you are moving
 
 	return nil
-}
-
-func (v *compBlockCollider) getName() string {
-	return "block collider"
 }
 
 func (e *element) newBlockCollider() {
@@ -205,10 +195,6 @@ func (v *compKeyboardController) update(e *element) error {
 	return nil
 }
 
-func (v *compKeyboardController) getName() string {
-	return "keyboard controller"
-}
-
 func (e *element) newKeyboardController(
 	right func(),
 	left func(),
@@ -237,5 +223,24 @@ func (e *element) newKeyboardController(
 		actionBtnX:    actionBtnX,
 		actionBtnY:    actionBtnY,
 		actionBtnMenu: actionBtnMenu}
+	e.addComponent(c)
+}
+
+type compGrounder struct {
+	componentActive
+	groundFunc func()
+	vy         float64
+}
+
+func (v *compGrounder) update(e *element) error {
+	if e.vy == 0 && v.vy == 0 {
+		v.groundFunc()
+	}
+	v.vy = e.vy
+	return nil
+}
+
+func (e *element) newGrounder(groundFunc func()) {
+	c := &compGrounder{groundFunc: groundFunc}
 	e.addComponent(c)
 }
