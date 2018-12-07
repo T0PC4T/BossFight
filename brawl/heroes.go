@@ -19,16 +19,10 @@ type rambo struct {
 }
 
 func (r *rambo) right() {
-	if !r.isRunning {
-		r.e.s.UpdateStatus("running")
-	}
 	r.e.vx += r.speed
 }
 
 func (r *rambo) left() {
-	if !r.isRunning {
-		r.e.s.UpdateStatus("running")
-	}
 	r.e.vx -= r.speed
 }
 
@@ -71,7 +65,6 @@ func (r *rambo) downLeft() {
 
 func (r *rambo) ground() {
 	r.canJump = true
-	r.e.s.UpdateStatus("idle")
 }
 
 func NewRambo(l *level) {
@@ -80,41 +73,38 @@ func NewRambo(l *level) {
 	s.animations = make(map[string]*animation)
 	s.status = "idle"
 
-	{
-		// idle
-		a := new(animation)
-		a.spriteSheet = loader.RamboSpriteSheet
-		a.frameOX = 0
-		a.frameOY = 0
-		a.frameWidth = 32
-		a.frameHeight = 32
-		a.frameNum = 5
-		a.ticksPerFrame = 5
-		s.animations["idle"] = a
-	}
+	var a *animation
+	// idle
+	a = new(animation)
+	a.spriteSheet = loader.RamboSpriteSheet
+	a.frameOX = 0
+	a.frameOY = 0
+	a.frameWidth = 32
+	a.frameHeight = 32
+	a.frameNum = 4
+	a.ticksPerFrame = 5
+	s.animations["idle"] = a
 
-	{
-		// running
-		a := new(animation)
-		a.spriteSheet = loader.RamboSpriteSheet
-		a.frameOX = 0
-		a.frameOY = 32
-		a.frameWidth = 32
-		a.frameHeight = 32
-		a.frameNum = 8
-		a.ticksPerFrame = 5
-		s.animations["running"] = a
-	}
+	// running
+	a = new(animation)
+	a.spriteSheet = loader.RamboSpriteSheet
+	a.frameOX = 0
+	a.frameOY = 32
+	a.frameWidth = 32
+	a.frameHeight = 32
+	a.frameNum = 7
+	a.ticksPerFrame = 5
+	s.animations["running"] = a
 
 	// Create rambo
 	// Create element
 	e := &element{s: s, status: "alive", w: 32, h: 32, x: 100, y: 100}
 	// Create rambo
 	r := &rambo{e: e, speed: ramboSpeed}
-	e.newGravityComponent(gravity)
+	e.newPusherComponent(0, gravity)
 	e.newKeyboardController(r.right, r.left, r.up, r.down, r.upRight, r.upLeft, r.downRight, r.downLeft, r.right, r.right, r.right, r.right, r.right)
 	e.newVelocityApplier(ramboMaxVel, 1, 0.9)
 	e.newBlockCollider()
-	e.newGrounder(r.ground)
+	e.newAnimator(r.ground)
 	l.addElement(e)
 }

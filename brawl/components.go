@@ -25,25 +25,25 @@ func (c *componentActive) setActive(a bool) {
 	c = &v
 }
 
-// Gravity Componenet
+// Pusher Componenet
 
-type compGravity struct {
+type compPusher struct {
 	componentActive
-	gravityAmount float64
+	vx, vy float64
 }
 
-func (g *compGravity) update(e *element) error {
+func (g *compPusher) update(e *element) error {
 	vx, vy := e.getVel()
-	e.setVel(vx, vy+g.gravityAmount)
+	e.setVel(vx+g.vx, vy+g.vy)
 	return nil
 }
 
-func (g *compGravity) getName() string {
+func (g *compPusher) getName() string {
 	return "gravity"
 }
 
-func (e *element) newGravityComponent(gravityAmount float64) {
-	cg := &compGravity{gravityAmount: gravityAmount}
+func (e *element) newPusherComponent(vx, vy float64) {
+	cg := &compPusher{vx: vx, vy: vy}
 	e.addComponent(cg)
 }
 
@@ -61,6 +61,8 @@ func (v *compVelocity) update(e *element) error {
 		vx = v.max
 	} else if vx < -v.max {
 		vx = -v.max
+	} else if vx > -0.1 && vx < 0.1 {
+		vx = 0
 	}
 
 	if vy > v.max {
@@ -226,21 +228,34 @@ func (e *element) newKeyboardController(
 	e.addComponent(c)
 }
 
-type compGrounder struct {
+type compAnimator struct {
 	componentActive
 	groundFunc func()
+	vx         float64
 	vy         float64
 }
 
-func (v *compGrounder) update(e *element) error {
+func (v *compAnimator) update(e *element) error {
 	if e.vy == 0 && v.vy == 0 {
 		v.groundFunc()
 	}
+	if e.vx == 0 && e.s.status != "idle" {
+		e.s.UpdateStatus("idle")
+	} else if e.s.status != "running" {
+		e.s.UpdateStatus("running")
+	}
+
+	if e.vx > 0 && e.s.movingRight == false {
+		e.s.movingRight = true
+	} else if e.vx < 0 && e.s.movingRight == true {
+		e.s.movingRight = false
+	}
+
 	v.vy = e.vy
 	return nil
 }
 
-func (e *element) newGrounder(groundFunc func()) {
-	c := &compGrounder{groundFunc: groundFunc}
+func (e *element) newAnimator(groundFunc func()) {
+	c := &compAnimator{groundFunc: groundFunc}
 	e.addComponent(c)
 }
